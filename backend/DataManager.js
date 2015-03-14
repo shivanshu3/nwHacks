@@ -2,6 +2,7 @@
 var HashMap = require('hashmap').HashMap;
 var HashSet = require('./HashSet.js');
 var User = require('./User.js');
+var FbGraph = require('fbgraph');
 
 var DataManager = function(){
 	//Instance variables:
