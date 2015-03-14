@@ -6,6 +6,7 @@ var Page = function(title){
 	this.title = title;
 	this.description;
 	this.imageURL;
+	this.pageID;
 };
 
 module.exports = Page;
