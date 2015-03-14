@@ -53,8 +53,22 @@ Router.prototype.initializeHTTPEndpoints = function(){
 	var app = this.expressApp;
 	var _this = this;
 
-	app.get('/hello/world', function(req, res){
-		res.send('Hello, World!');
+	//GET Params example:
+	app.get('/paramsexample/:name', function(req, res){
+		res.send(req.params);
+		console.log('Params Example Served');
+	});
+
+	//GET query example:
+	app.get('/getexample', function(req, res){
+		res.send(req.query);
+		console.log('Get Example Served');
+	});
+
+	//POST query example:
+	app.post('/postexample', function (req, res) {
+		res.send(req.body);
+		console.log('Post Example Served');
 	});
 };
 
