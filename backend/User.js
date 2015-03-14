@@ -8,6 +8,9 @@ var User = function(name){
 	this.invisiblePages;  //Hashset
 	this.likedPages;	  //Hashset
 	this.unionPages;	  //Hashmap PageID -> Number of Likes
+
+	//The set of friends:
+	this.friends;
 };
 
 module.exports = User;

@@ -13,9 +13,10 @@ var multer = require('multer');
  * The constructor. Following parameters are needed:
  * expressJSPort: The port on which Express.js listens for HTTP requests
  */
-var Router = function(expressJSPort){
+var Router = function(expressJSPort, dataManager){
 	//Instance variables:
 	this.expressApp;
+	this.dataManager = dataManager;
 
 	//Initializing the router:
 	this.initializeExpress();
@@ -52,6 +53,13 @@ Router.prototype.initializeExpress = function(){
 Router.prototype.initializeHTTPEndpoints = function(){
 	var app = this.expressApp;
 	var _this = this;
+
+	//Sign in call:
+	app.get('/sign-in', function(req, res){
+		var userid = req.query.userid;
+		var token = req.query.token;
+		_this.dataManager.addUser(userid, token);
+	});
 
 	//GET Params example:
 	app.get('/paramsexample/:name', function(req, res){
