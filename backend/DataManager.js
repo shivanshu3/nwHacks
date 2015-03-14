@@ -2,7 +2,7 @@
 var HashMap = require('hashmap').HashMap;
 var HashSet = require('./HashSet.js');
 var User = require('./User.js');
-var FBGraph = require('fbgraph');
+var FbGraph = require('fbgraph');
 
 var DataManager = function(){
 	//Instance variables:
@@ -19,20 +19,9 @@ DataManager.prototype.addUser = function(userid, token,name){
 		this.usersHashMap.get(userid).token = token;
 	}else{
 
-		var options = { //set for making an http request
-    		timeout:  3000
-  			, pool:     { maxSockets:  Infinity }
-  			, headers:  { connection:  "keep-alive" }
-		};
-
-		FBGraph.setAccessToken(token);
-
-		var friendslist = FBGraph.setOptions(options).get('/' + userid + '/friends', function(err, res) {
-    		console.log(res); 
-  		});
-
 		//1. create new userobject
-		newUser = new User(userid, name, token);
+		newUser = this.createNewUser(userid, token, name);
+
 		//2. add to usersHashMap
 		this.usersHashMap.set(userid,newUser);
 		
@@ -46,7 +35,25 @@ DataManager.prototype.addUser = function(userid, token,name){
 
 		newUser.union = this.union(newUser);
 
+	
+
 	}
+};
+
+DataManager.prototype.createNewUser = function(userid, token, name){
+	newUser = new User(userid, name, token);
+	if(userid == 0){ 
+		newUser.likedPages.add("slim shady");
+		newUser.likedPages.add("Marshawn lynch");
+		newUser.likedPages.add("Arethra franklin");
+	}else{
+		newUser.likedPages.add("miley cyrus");
+		newUser.likedPages.add("kanye west");
+		newUser.likedPages.add("johantony");
+	}
+
+
+	return newUser;
 };
 
 DataManager.prototype.addNewNodeToGraph = function(User){
@@ -82,13 +89,15 @@ DataManager.prototype.updateNeighborSets = function(User){
 };
 
 DataManager.prototype.union = function(User){
+	
+			//console.log(User.friends);
+
 	union = new HashMap();
 
 	var setOfFriends = User.friends;
 
 	if(typeof setOfFriends == 'undefined')
 	return;
-
 
 	for(var it = 0; it<setOfFriends.length; it++){
 			userFriend = setOfFriends[it];
