@@ -112,19 +112,22 @@ DataManager.prototype.updateNeighborPopularityUnions = function(user){
 	if(setOfFriends == undefined)
 		return;
 
+	//Initialize the userPages array which contains the user's liked pages:
+	var userLikes = user.likes.keys();
+	var userPages = [];
+	for(var i=0; i<userLikes.length; i++){
+		userPages.push(userLikes[i].page);
+	}
+
 	for(var it = 0; it<setOfFriends.length; it++){
 		currFriend = setOfFriends[it];
-		//append the new user to the friends sets of its neighbors 
-		currFriend.addFriend(user);
 
 		//update the union list of the neighbors too.
-		var friendLikes = currFriend.likes.keys();
-		for(var i = 0; i < friendLikes.length; i++){
-			currLike = friendLikes[i];
-			if(currFriend.unionPagesPopularity.has(currLike.page.pageID)){
-				currFriend.unionPagesPopularity.set(currLike.page.pageID, currFriend.unionPagesPopularity.get(currLike.page.pageID) + 1);
+		for(var i=0; i<userPages.length; i++){
+			if(currFriend.unionPagesPopularity.has(userPages[i].pageID)){
+				currFriend.unionPagesPopularity.set(userPages[i].pageID, currFriend.unionPagesPopularity.get(userPages[i].pageID) + 1);
 			}else{
-				currFriend.unionPagesPopularity.set(currLike.page.pageID, 1);
+				currFriend.unionPagesPopularity.set(userPages[i].pageID, 1);
 			}
 		}
 	}
