@@ -23,12 +23,11 @@ DataManager.prototype.addUser = function(userid, token){
 		this.usersHashMap.get(userid).token = token;
 	}else{
 		this.createNewUser(userid, token, function(newUser){
-			//add node (userobject) to graph
-			_this.addNewNodeToGraph(newUser);
-			return;//HAVENT TESTED THE FOLLOWING CODE:
+			
+			
 			//for each friend in the userobject's set of friends, add 
 			//userobject to the set of friend's friends
-			this.updateNeighborSets(User);
+			this.updateNeighborSets(user);
 			//compute the union of pages liked by userobjects friends
 			newUser.union = this.union(newUser);
 		});
@@ -107,28 +106,20 @@ DataManager.prototype.getCreatePage = function(pageID, title){
 	}
 };
 
-DataManager.prototype.addNewNodeToGraph = function(User){
-	if(!this.graph.has(User.userid))
-	{
-		this.graph.set(User.userid, User);
-	}
-
-};
-
-DataManager.prototype.updateNeighborSets = function(User){
-	var setOfFriends = User.friends;
+DataManager.prototype.updateNeighborSets = function(user){
+	var setOfFriends = user.friends.keys();
 	
-	if(typeof setOfFriends == 'undefined')
+	if(setOfFriends == undefined)
 		return;
 
 	for(var it = 0; it<setOfFriends.length; it++){
 		currFriend = setOfFriends[i];
 		//append the new user to the friends sets of its neighbors 
-		graph.get(currFriend.addFriend(newUser));
+		currFriend.addFriend(user);
 
 		//update the union list of the neighbors too.
-		for(var i = 0; i < User.likedPages.length; i++){
-			currPageID = User.likedPages[i];
+		for(var i = 0; i < user.likedPages.length; i++){
+			currPageID = user.likedPages[i];
 			if(currFriend.union.has(currPageID)){
 				currFriend.union.set(currPageID, currFriend.union.get(currPageID)++);
 			}else{
@@ -136,16 +127,15 @@ DataManager.prototype.updateNeighborSets = function(User){
 			}
 		}
 	}
-
 };
 
-DataManager.prototype.union = function(User){
+DataManager.prototype.union = function(user){
 	
-			//console.log(User.friends);
+			//console.log(user.friends);
 
 	union = new HashMap();
 
-	var setOfFriends = User.friends;
+	var setOfFriends = user.friends;
 
 	if(typeof setOfFriends == 'undefined')
 	return;
