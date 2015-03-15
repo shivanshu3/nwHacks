@@ -14,9 +14,15 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.AdapterView.OnItemClickListener;
+import com.facebook.*;
+import com.facebook.model.GraphObject;
+import com.facebook.model.GraphPlace;
+import com.facebook.model.GraphUser;
+import com.facebook.widget.*;
 
 public class MainActivity extends Activity {
-
+	
+	private LoginButton loginButton;
 	ListView list;
     private List<String> List_file;
 	@Override
@@ -27,6 +33,17 @@ public class MainActivity extends Activity {
        list = (ListView)findViewById(R.id.list1);
  
         CreateListView();
+        
+        loginButton = (LoginButton) findViewById(R.id.login_button);
+        loginButton.setUserInfoChangedCallback(new LoginButton.UserInfoChangedCallback() {
+            @Override
+            public void onUserInfoFetched(GraphUser user) {
+                MainActivity.this.user = user;
+                updateUI();
+                // It's possible that we were waiting for this.user to be populated in order to post a
+                // status update.
+                handlePendingAction();
+            }
 	}
 
 	
