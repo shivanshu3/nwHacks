@@ -12,9 +12,7 @@ var DataManager = function(){
 	this.pagesHashMap;	//HashMap pageid -> page
 	this.usersHashMap = new HashMap();
 	this.pagesHashMap = new HashMap();
-	this.graph = new HashMap();
 };
-
 
 DataManager.prototype.addUser = function(userid, token){
 	var _this = this;
@@ -78,6 +76,7 @@ DataManager.prototype.createNewUser = function(userid, token, callback){
 					if(_this.usersHashMap.has(friendIDs[i])){
 						var friend = _this.usersHashMap.get(friendIDs[i]);
 						newUser.friends.add(friend);
+						friend.friends.add(newUser);
 					}
 				}
 
