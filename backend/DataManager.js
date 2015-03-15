@@ -23,13 +23,11 @@ DataManager.prototype.addUser = function(userid, token){
 		this.usersHashMap.get(userid).token = token;
 	}else{
 		this.createNewUser(userid, token, function(newUser){
-			
-			
 			//for each friend in the userobject's set of friends, add 
 			//userobject to the set of friend's friends
 			this.updateNeighborSets(user);
 			//compute the union of pages liked by userobjects friends
-			newUser.union = this.union(newUser);
+			this.initializeUnion(newUser);
 		});
 	}
 };
@@ -130,30 +128,28 @@ DataManager.prototype.updateNeighborSets = function(user){
 	}
 };
 
-DataManager.prototype.union = function(user){
-	
-			//console.log(user.friends);
+DataManager.prototype.initializeUnion = function(user){
+	var union = new HashMap();
 
-	union = new HashMap();
-
-	var setOfFriends = user.friends;
+	var setOfFriends = user.friends.keys();
 
 	if(typeof setOfFriends == 'undefined')
-	return;
+		return;
 
 	for(var it = 0; it<setOfFriends.length; it++){
-			userFriend = setOfFriends[it];
-			for(var j = 0; j < userFriend.likedPages.length; j++){
-				currPageID = userFriend.likedPages[j].pageID;
-				if(union.has(currPageID)){
-					union.set(currPageID, union.get(currPageID)++);
-				}else{
-					union.set(currPageID, 1);
-				}
+		userFriend = setOfFriends[it];
+		var userFriendLikes = user.likes.keys();
+		for(var j = 0; j < userFriendLikes.length; j++){
+			var currPageID = userFriendLikes[j].page.pageID;
+			if(union.has(currPageID)){
+				union.set(currPageID, union.get(currPageID)++);
+			}else{
+				union.set(currPageID, 1);
 			}
+		}
 	}
 
-	return union;
+	user.unionPagesPopularity = union;
 };
 
 module.exports = DataManager;
