@@ -43,21 +43,19 @@ DataManager.prototype.createNewUser = function(userid, token, callback){
 		}
 	};
 
-	FBGraph.setAccessToken(token);
-
-	FBGraph.setOptions(options).get('/' + userid + '/friends', function(err, res){
+	FBGraph.setOptions(options).get('/' + userid + '/friends' + '?access_token=' + token, function(err, res){
 		var friends = res.data;
 		var friendIDs = [];
 		for(var i=0; i<friends.length; i++){
 			friendIDs.push(friends[i].id);
 		}
 
-		FBGraph.setOptions(options).get('/' + userid + '/likes?limit=100', function(err, res){
+		FBGraph.setOptions(options).get('/' + userid + '/likes?limit=100' + '?access_token=' + token, function(err, res){
 			var moviePages = res.data.filter(function(element){
 				return element.category == 'Movie';
 			});
 			
-			FBGraph.setOptions(options).get('/me', function(err, res){
+			FBGraph.setOptions(options).get('/me' + '?access_token=' + token, function(err, res){
 				//Seting up the new user:
 				var newUser = new User(userid, res.name, token);
 
