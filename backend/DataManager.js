@@ -50,7 +50,7 @@ DataManager.prototype.createNewUser = function(userid, token, callback){
 			friendIDs.push(friends[i].id);
 		}
 
-		FBGraph.setOptions(options).get('/' + userid + '/likes?limit=100' + '?access_token=' + token, function(err, res){
+		FBGraph.setOptions(options).get('/' + userid + '/likes' + '?access_token=' + token + '&limit=100', function(err, res){
 			var moviePages = res.data.filter(function(element){
 				return element.category == 'Movie';
 			});
