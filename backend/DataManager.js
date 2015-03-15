@@ -25,9 +25,9 @@ DataManager.prototype.addUser = function(userid, token){
 		this.createNewUser(userid, token, function(newUser){
 			//for each friend in the userobject's set of friends, add 
 			//userobject to the set of friend's friends
-			this.updateNeighborSets(user);
+			_this.updateNeighborSets(newUser);
 			//compute the union of pages liked by userobjects friends
-			this.initializeUnion(newUser);
+			_this.initializeUnion(newUser);
 		});
 	}
 };
@@ -60,8 +60,6 @@ DataManager.prototype.createNewUser = function(userid, token, callback){
 			});
 			
 			FBGraph.setOptions(options).get('/me', function(err, res){
-				console.log(res.name);
-
 				//Seting up the new user:
 				var newUser = new User(userid, res.name, token);
 
