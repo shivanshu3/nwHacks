@@ -14,19 +14,23 @@ var DataManager = function(){
 	this.pagesHashMap = new HashMap();
 };
 
-DataManager.prototype.addUser = function(userid, token){
+DataManager.prototype.addUser = function(userid, token, callback){
 	var _this = this;
 
 	console.log('New user request');
 
 	if(this.usersHashMap.has(userid)){
 		this.usersHashMap.get(userid).token = token;
+		callback();
 	}else{
 		this.createNewUser(userid, token, function(newUser){
 			_this.initializePopularityUnion(newUser);
 			_this.updateNeighborPopularityUnions(newUser);
 			_this.initializeRecentsUnion(newUser);
 			_this.updateNeighborRecentsUnion(newUser);
+
+			//All done!
+			callback();
 		});
 	}
 };

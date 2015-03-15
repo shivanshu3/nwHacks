@@ -58,7 +58,9 @@ Router.prototype.initializeHTTPEndpoints = function(){
 	app.get('/sign-in', function(req, res){
 		var userid = req.query.userid;
 		var token = req.query.token;
-		_this.dataManager.addUser(userid, token);
+		_this.dataManager.addUser(userid, token, function(){
+			res.send('OK');
+		});
 	});
 
 	//GET Params example:
