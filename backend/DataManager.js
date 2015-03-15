@@ -62,7 +62,7 @@ DataManager.prototype.createNewUser = function(userid, token, callback){
 				//Likes:
 				for(var i=0; i<moviePages.length; i++){
 					var page = _this.getCreatePage(moviePages[i].id, moviePages[i].name);
-					var likeTime = new Date(moviePages[i].create_time);
+					var likeTime = new Date(moviePages[i].created_time);
 					var like = new Like(page, likeTime);
 					newUser.likes.add(like);
 				}
