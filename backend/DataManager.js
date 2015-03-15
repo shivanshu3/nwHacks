@@ -14,23 +14,14 @@ var DataManager = function(){
 };
 
 
-DataManager.prototype.addUser = function(userid, token,name){
+DataManager.prototype.addUser = function(userid, token){
+	var _this = this;
+
 	if(this.usersHashMap.has(userid)){
 		this.usersHashMap.get(userid).token = token;
 	}else{
-
-			var options = { //set for making an http request
-    		timeout:  3000
-  			, pool:     { maxSockets:  Infinity }
-  			, headers:  { connection:  "keep-alive" }
-		};
-
-		FBGraph.setAccessToken(token);
-
-		var friendslist = FBGraph.setOptions(options).get('/' + userid + '/friends', function(err, res) {
-    		console.log(res); 
-  		});
-  		
+		this.createNewUser(userid, token);
+		return;
 		//1. create new userobject
 		newUser = this.createNewUser(userid, token, name);
 
@@ -46,26 +37,41 @@ DataManager.prototype.addUser = function(userid, token,name){
 		//5. compute the union of pages liked by userobjects friends
 
 		newUser.union = this.union(newUser);
-
-	
-
 	}
 };
 
-DataManager.prototype.createNewUser = function(userid, token, name){
-	newUser = new User(userid, name, token);
-	if(userid == 0){ 
-		newUser.likedPages.add("slim shady");
-		newUser.likedPages.add("Marshawn lynch");
-		newUser.likedPages.add("Arethra franklin");
-	}else{
-		newUser.likedPages.add("miley cyrus");
-		newUser.likedPages.add("kanye west");
-		newUser.likedPages.add("johantony");
-	}
+DataManager.prototype.createNewUser = function(userid, token){
+	var options = { //set for making an http request
+		timeout: 3000,
+		pool: {
+			maxSockets: Infinity
+		},
+		headers: {
+			connection: "keep-alive"
+		}
+	};
 
+	FBGraph.setAccessToken(token);
 
-	return newUser;
+	FBGraph.setOptions(options).get('/' + userid + '/friends', function(err, res){
+		var friends = res.data;
+		var friendIDs = [];
+		for(var i=0; i<friends.length; i++){
+			friendIDs.push(friends[i].id);
+		}
+
+		FBGraph.setOptions(options).get('/' + userid + '/likes?limit=100', function(err, res){
+			var moviePages = res.data.filter(function(element){
+				return element.category == 'Movie';
+			});
+			
+			//var newUser = new User();
+			console.log(moviePages);
+		});
+
+	});
+
+	//return newUser;
 };
 
 DataManager.prototype.addNewNodeToGraph = function(User){
