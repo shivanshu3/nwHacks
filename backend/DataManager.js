@@ -118,12 +118,13 @@ DataManager.prototype.updateNeighborSets = function(user){
 		currFriend.addFriend(user);
 
 		//update the union list of the neighbors too.
-		for(var i = 0; i < user.likedPages.length; i++){
-			currPageID = user.likedPages[i];
-			if(currFriend.union.has(currPageID)){
-				currFriend.union.set(currPageID, currFriend.union.get(currPageID)++);
+		var friendLikes = currFriend.likes.keys();
+		for(var i = 0; i < friendLikes.length; i++){
+			currLike = friendLikes[i];
+			if(currFriend.unionPagesPopularity.has(currLike.page.pageID)){
+				currFriend.unionPagesPopularity.set(currLike.page.pageID, currFriend.union.get(currLike)++);
 			}else{
-				currFriend.union.set(currPageID,1);
+				currFriend.unionPagesPopularity.set(currLike.page.pageID, 1);
 			}
 		}
 	}
