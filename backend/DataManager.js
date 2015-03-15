@@ -25,6 +25,7 @@ DataManager.prototype.addUser = function(userid, token){
 		this.createNewUser(userid, token, function(newUser){
 			_this.initializePopularityUnion(newUser);
 			_this.updateNeighborPopularityUnions(newUser);
+			_this.initializeRecentsUnion(newUser);
 		});
 	}
 };
@@ -150,6 +151,33 @@ DataManager.prototype.initializePopularityUnion = function(user){
 				union.set(currPageID, union.get(currPageID) + 1);
 			}else{
 				union.set(currPageID, 1);
+			}
+		}
+	}
+
+	user.unionPagesPopularity = union;
+};
+
+DataManager.prototype.initializeRecentsUnion = function(user){
+	var union = new HashMap();
+
+	var setOfFriends = user.friends.keys();
+
+	if(typeof setOfFriends == 'undefined')
+		return;
+
+	for(var it = 0; it<setOfFriends.length; it++){
+		userFriend = setOfFriends[it];
+		var userFriendLikes = userFriend.likes.keys();
+		for(var j = 0; j < userFriendLikes.length; j++){
+			var currPageID = userFriendLikes[j].page.pageID;
+			if(union.has(currPageID)){
+				//If this like is newer, store this newer time instead:
+				if(userFriendLikes[j].time.getTime() < union.get(currPageID).getTime()){
+					union.set(currPageID, userFriendLikes[j].time);
+				}
+			}else{
+				union.set(currPageID, userFriendLikes[j].time);
 			}
 		}
 	}
