@@ -8,22 +8,21 @@ var User = function(userid, name, token){
 	this.name = name;
 	this.token = token;
 	this.invisiblePages = new HashSet();  //Hashset
-	this.likedPages = new HashSet();	  //Hashset
-	this.unionPages = new HashMap();	  //Hashmap PageID -> Number of Likes
+	this.likes = new HashSet();	  //Hashset of likes
+	this.unionPagesPopularity = new HashMap();	//Hashmap PageID -> Number of Likes
+	this.unionPagesRecents = new Hashmap();		//Hashmap PageID -> Time liked
 	this.friends = new HashSet();		  //The set of friends:
-
 };
 
-
-User.addFriend = function(User) {
+User.prototype.addFriend = function(User) {
 	this.friends.add(User);
 };
 
-User.removeFriend = function(User){
+User.prototype.removeFriend = function(User){
 	this.friends.remove(User);
 };
 
-User.getSetOfFriends = function(){
+User.prototype.getSetOfFriends = function(){
 	return this.friends;
 };
 
