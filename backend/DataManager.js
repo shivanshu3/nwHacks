@@ -180,7 +180,7 @@ DataManager.prototype.initializeRecentsUnion = function(user){
 		}
 	}
 
-	user.unionPagesPopularity = union;
+	user.unionPagesRecents = union;
 };
 
 module.exports = DataManager;
