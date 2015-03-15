@@ -23,11 +23,8 @@ DataManager.prototype.addUser = function(userid, token){
 		this.usersHashMap.get(userid).token = token;
 	}else{
 		this.createNewUser(userid, token, function(newUser){
-			//for each friend in the userobject's set of friends, add 
-			//userobject to the set of friend's friends
-			_this.updateNeighborSets(newUser);
-			//compute the union of pages liked by userobjects friends
-			_this.initializeUnion(newUser);
+			_this.initializePopularityUnion(newUser);
+			_this.updateNeighborPopularityUnions(newUser);
 		});
 	}
 };
@@ -93,6 +90,12 @@ DataManager.prototype.createNewUser = function(userid, token, callback){
 	//return newUser;
 };
 
+/**
+ * Given the page details (pageID and title),
+ * it either retrives that page from the hashmap if it exists,
+ * or creates it, puts it in the hashmap and returns it if
+ * it did not exist.
+ */
 DataManager.prototype.getCreatePage = function(pageID, title){
 	if(this.pagesHashMap.has(pageID)){
 		return this.pagesHashMap.get(pageID);
@@ -103,7 +106,7 @@ DataManager.prototype.getCreatePage = function(pageID, title){
 	}
 };
 
-DataManager.prototype.updateNeighborSets = function(user){
+DataManager.prototype.updateNeighborPopularityUnions = function(user){
 	var setOfFriends = user.friends.keys();
 	
 	if(setOfFriends == undefined)
@@ -127,7 +130,7 @@ DataManager.prototype.updateNeighborSets = function(user){
 	}
 };
 
-DataManager.prototype.initializeUnion = function(user){
+DataManager.prototype.initializePopularityUnion = function(user){
 	var union = new HashMap();
 
 	var setOfFriends = user.friends.keys();
@@ -137,7 +140,7 @@ DataManager.prototype.initializeUnion = function(user){
 
 	for(var it = 0; it<setOfFriends.length; it++){
 		userFriend = setOfFriends[it];
-		var userFriendLikes = user.likes.keys();
+		var userFriendLikes = userFriend.likes.keys();
 		for(var j = 0; j < userFriendLikes.length; j++){
 			var currPageID = userFriendLikes[j].page.pageID;
 			if(union.has(currPageID)){
