@@ -172,7 +172,7 @@ DataManager.prototype.initializeRecentsUnion = function(user){
 			var currPageID = userFriendLikes[j].page.pageID;
 			if(union.has(currPageID)){
 				//If this like is newer, store this newer time instead:
-				if(userFriendLikes[j].time.getTime() < union.get(currPageID).getTime()){
+				if(userFriendLikes[j].time.getTime() > union.get(currPageID).getTime()){
 					union.set(currPageID, userFriendLikes[j].time);
 				}
 			}else{
@@ -199,8 +199,8 @@ DataManager.prototype.updateNeighborRecentsUnion = function(user){
 		//update the union list of the neighbors too.
 		for(var i=0; i<userLikes.length; i++){
 			if(currFriend.unionPagesRecents.has(userLikes[i].page.pageID)){
-				if(userLikes[i].time.getTime() < currFriend.unionPagesRecents.get(userLikes[i].page.pageID).getTime()){
-					currFriend.unionPagesRecents.set(userLikes[i].page.pageID, currFriend.unionPagesRecents.get(userLikes[i].page.pageID) + 1);
+				if(userLikes[i].time.getTime() > currFriend.unionPagesRecents.get(userLikes[i].page.pageID).getTime()){
+					currFriend.unionPagesRecents.set(userLikes[i].page.pageID, userLikes[i].time);
 				}
 			}else{
 				currFriend.unionPagesRecents.set(userLikes[i].page.pageID, userLikes[i].time);
