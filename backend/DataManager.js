@@ -26,6 +26,7 @@ DataManager.prototype.addUser = function(userid, token){
 			_this.initializePopularityUnion(newUser);
 			_this.updateNeighborPopularityUnions(newUser);
 			_this.initializeRecentsUnion(newUser);
+			_this.updateNeighborRecentsUnion(newUser);
 		});
 	}
 };
@@ -181,6 +182,31 @@ DataManager.prototype.initializeRecentsUnion = function(user){
 	}
 
 	user.unionPagesRecents = union;
+};
+
+DataManager.prototype.updateNeighborRecentsUnion = function(user){
+	var setOfFriends = user.friends.keys();
+
+	if(setOfFriends == undefined)
+		return;
+
+	//Initialize the userLikes array which contains the user's liked pages with time:
+	var userLikes = user.likes.keys();
+
+	for(var it = 0; it<setOfFriends.length; it++){
+		currFriend = setOfFriends[it];
+
+		//update the union list of the neighbors too.
+		for(var i=0; i<userLikes.length; i++){
+			if(currFriend.unionPagesRecents.has(userLikes[i].page.pageID)){
+				if(userLikes[i].time.getTime() < currFriend.unionPagesRecents.get(userLikes[i].page.pageID).getTime()){
+					currFriend.unionPagesRecents.set(userLikes[i].page.pageID, currFriend.unionPagesRecents.get(userLikes[i].page.pageID) + 1);
+				}
+			}else{
+				currFriend.unionPagesRecents.set(userLikes[i].page.pageID, userLikes[i].time);
+			}
+		}
+	}
 };
 
 module.exports = DataManager;
