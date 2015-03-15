@@ -10,7 +10,7 @@ var User = function(userid, name, token){
 	this.invisiblePages = new HashSet();  //Hashset
 	this.likes = new HashSet();	  //Hashset of likes
 	this.unionPagesPopularity = new HashMap();	//Hashmap PageID -> Number of Likes
-	this.unionPagesRecents = new Hashmap();		//Hashmap PageID -> Time liked
+	this.unionPagesRecents = new HashMap();		//Hashmap PageID -> Time liked
 	this.friends = new HashSet();		  //The set of friends:
 };
 

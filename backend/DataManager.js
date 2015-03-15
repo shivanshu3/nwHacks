@@ -3,6 +3,8 @@ var HashMap = require('hashmap').HashMap;
 var HashSet = require('./HashSet.js');
 var User = require('./User.js');
 var FBGraph = require('fbgraph');
+var Page = require('./Page.js');
+var Like = require('./Like.js');
 
 var DataManager = function(){
 	//Instance variables:
@@ -20,27 +22,22 @@ DataManager.prototype.addUser = function(userid, token){
 	if(this.usersHashMap.has(userid)){
 		this.usersHashMap.get(userid).token = token;
 	}else{
-		this.createNewUser(userid, token);
-		return;
-		//1. create new userobject
-		newUser = this.createNewUser(userid, token, name);
-
-		//2. add to usersHashMap
-		this.usersHashMap.set(userid,newUser);
-		
-		//3. add node (userobject) to graph
-		this.addNewNodeToGraph(newUser);
-			
-		//4. for each friend in the userobject's set of friends, add 
-		//	 userobject to the set of friend's friends
-		this.updateNeighborSets(User);
-		//5. compute the union of pages liked by userobjects friends
-
-		newUser.union = this.union(newUser);
+		this.createNewUser(userid, token, function(newUser){
+			//add node (userobject) to graph
+			_this.addNewNodeToGraph(newUser);
+			return;//HAVENT TESTED THE FOLLOWING CODE:
+			//for each friend in the userobject's set of friends, add 
+			//userobject to the set of friend's friends
+			this.updateNeighborSets(User);
+			//compute the union of pages liked by userobjects friends
+			newUser.union = this.union(newUser);
+		});
 	}
 };
 
-DataManager.prototype.createNewUser = function(userid, token){
+DataManager.prototype.createNewUser = function(userid, token, callback){
+	var _this = this;
+
 	var options = { //set for making an http request
 		timeout: 3000,
 		pool: {
@@ -65,13 +62,49 @@ DataManager.prototype.createNewUser = function(userid, token){
 				return element.category == 'Movie';
 			});
 			
-			//var newUser = new User();
-			console.log(moviePages);
+			FBGraph.setOptions(options).get('/me', function(err, res){
+				console.log(res.name);
+
+				//Seting up the new user:
+				var newUser = new User(userid, res.name, token);
+
+				//Likes:
+				for(var i=0; i<moviePages.length; i++){
+					var page = _this.getCreatePage(moviePages[i].id, moviePages[i].name);
+					var likeTime = new Date(moviePages[i].create_time);
+					var like = new Like(page, likeTime);
+					newUser.likes.add(like);
+				}
+
+				//Friends:
+				for(var i=0; i<friendIDs.length; i++){
+					if(_this.usersHashMap.has(friendIDs[i])){
+						var friend = _this.usersHashMap.get(friendIDs[i]);
+						newUser.friends.add(friend);
+					}
+				}
+
+				//Store the user in the hashmap:
+				_this.usersHashMap.set(userid, newUser);
+
+				//Done initializing the user!
+				callback(newUser);
+			});
 		});
 
 	});
 
 	//return newUser;
+};
+
+DataManager.prototype.getCreatePage = function(pageID, title){
+	if(this.pagesHashMap.has(pageID)){
+		return this.pagesHashMap.get(pageID);
+	}else{
+		var newPage = new Page(pageID, title);
+		this.pagesHashMap.set(pageID, newPage);
+		return newPage;
+	}
 };
 
 DataManager.prototype.addNewNodeToGraph = function(User){
