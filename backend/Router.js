@@ -70,6 +70,13 @@ Router.prototype.initializeHTTPEndpoints = function(){
 		res.send(result);
 	});
 
+	//Get the pages sorted by recent amongst friends:
+	app.get('/pages-recents', function(req, res){
+		var userid = req.query.userid;
+		var result = _this.dataManager.getPagesRecents(userid);
+		res.send(result);
+	});
+
 	//GET Params example:
 	app.get('/paramsexample/:name', function(req, res){
 		res.send(req.params);
