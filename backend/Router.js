@@ -63,6 +63,13 @@ Router.prototype.initializeHTTPEndpoints = function(){
 		});
 	});
 
+	//Get the pages sorted by popularity amongst friends:
+	app.get('/pages-popularity', function(req, res){
+		var userid = req.query.userid;
+		var result = _this.dataManager.getPagesPopularity(userid);
+		res.send(result);
+	});
+
 	//GET Params example:
 	app.get('/paramsexample/:name', function(req, res){
 		res.send(req.params);

@@ -213,4 +213,19 @@ DataManager.prototype.updateNeighborRecentsUnion = function(user){
 	}
 };
 
+/**
+ * Gets the list of pages liked by the given user's friends.
+ */
+DataManager.prototype.getPagesPopularity = function(userid){
+	var user = this.usersHashMap.get(userid.toString());
+	var pagesKeys = user.unionPagesPopularity.keys();
+
+	var pagesList = [];
+	for(var i=0; i<pagesKeys.length; i++){
+		pagesList.push(this.pagesHashMap.get(pagesKeys[i]));
+	}
+
+	return pagesList;
+};
+
 module.exports = DataManager;
