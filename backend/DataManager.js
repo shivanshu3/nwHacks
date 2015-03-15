@@ -19,6 +19,8 @@ var DataManager = function(){
 DataManager.prototype.addUser = function(userid, token){
 	var _this = this;
 
+	console.log('New user request');
+
 	if(this.usersHashMap.has(userid)){
 		this.usersHashMap.get(userid).token = token;
 	}else{
@@ -109,7 +111,7 @@ DataManager.prototype.updateNeighborSets = function(user){
 		return;
 
 	for(var it = 0; it<setOfFriends.length; it++){
-		currFriend = setOfFriends[i];
+		currFriend = setOfFriends[it];
 		//append the new user to the friends sets of its neighbors 
 		currFriend.addFriend(user);
 
@@ -118,7 +120,7 @@ DataManager.prototype.updateNeighborSets = function(user){
 		for(var i = 0; i < friendLikes.length; i++){
 			currLike = friendLikes[i];
 			if(currFriend.unionPagesPopularity.has(currLike.page.pageID)){
-				currFriend.unionPagesPopularity.set(currLike.page.pageID, currFriend.union.get(currLike)++);
+				currFriend.unionPagesPopularity.set(currLike.page.pageID, currFriend.unionPagesPopularity.get(currLike.page.pageID) + 1);
 			}else{
 				currFriend.unionPagesPopularity.set(currLike.page.pageID, 1);
 			}
@@ -140,7 +142,7 @@ DataManager.prototype.initializeUnion = function(user){
 		for(var j = 0; j < userFriendLikes.length; j++){
 			var currPageID = userFriendLikes[j].page.pageID;
 			if(union.has(currPageID)){
-				union.set(currPageID, union.get(currPageID)++);
+				union.set(currPageID, union.get(currPageID) + 1);
 			}else{
 				union.set(currPageID, 1);
 			}
